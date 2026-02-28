@@ -6,12 +6,12 @@
  */
 
 export const theme = {
-  // Main brand color - gold/yellowish accent for dark theme
-  brand: "#D4AF37",
+  // Main brand color - light blue accent
+  brand: "#3B9EE8",
   
   // Brand color variations
-  brandLight: "#E8C547", // Lighter gold for hover states
-  brandDark: "#B8960F",  // Darker gold for depth
+  brandLight: "#5BB3F0", // Lighter blue for hover states
+  brandDark: "#2282CC",  // Darker blue for depth
 } as const;
 
 // Helper function to get brand color with opacity
