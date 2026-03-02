@@ -1,17 +1,16 @@
 "use client";
 
 import { useEffect } from "react";
+import { useTheme } from "next-themes";
 import { theme } from "@/lib/theme";
 
-/**
- * ThemeProvider component that sets CSS variables from theme configuration
- * This ensures the brand color updates automatically when changed in theme.ts
- */
 export function ThemeProvider({ children }: { children: React.ReactNode }) {
+  const { resolvedTheme } = useTheme();
+
   useEffect(() => {
-    // Set the CSS variable from theme configuration
-    document.documentElement.style.setProperty("--brand", theme.brand);
-  }, []);
+    const brand = resolvedTheme === "dark" ? theme.darkBrand : theme.brand;
+    document.documentElement.style.setProperty("--brand", brand);
+  }, [resolvedTheme]);
 
   return <>{children}</>;
 }

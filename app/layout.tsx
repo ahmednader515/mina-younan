@@ -42,9 +42,9 @@ export default function RootLayout({
           dangerouslySetInnerHTML={{
             __html: `
               (function() {
-                if (document.documentElement) {
-                  document.documentElement.style.setProperty('--brand', '${theme.brand}');
-                }
+                var saved = localStorage.getItem('theme');
+                var isDark = saved === 'dark';
+                document.documentElement.style.setProperty('--brand', isDark ? '${theme.darkBrand}' : '${theme.brand}');
               })();
             `,
           }}

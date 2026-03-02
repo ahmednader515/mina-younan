@@ -32,20 +32,20 @@ export const Providers = ({ children }: { children: React.ReactNode }) => {
     >
       <SessionHandler>
         <RTLProvider>
-          <BrandThemeProvider>
             <ThemeProvider
               attribute="class"
-              defaultTheme="dark"
+              defaultTheme="light"
               enableSystem={false}
               disableTransitionOnChange
             >
-              <NavigationProvider>
-                <ToastProvider />
-                {children}
-                <Toaster />
-              </NavigationProvider>
+              <BrandThemeProvider>
+                <NavigationProvider>
+                  <ToastProvider />
+                  {children}
+                  <Toaster />
+                </NavigationProvider>
+              </BrandThemeProvider>
             </ThemeProvider>
-          </BrandThemeProvider>
         </RTLProvider>
       </SessionHandler>
     </SessionProvider>
