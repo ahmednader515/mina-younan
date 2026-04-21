@@ -135,6 +135,13 @@ const TeacherCodesPage = () => {
     }
   };
 
+  const handleSubmitSearch = (e: React.FormEvent<HTMLFormElement>) => {
+    e.preventDefault();
+    const formData = new FormData(e.currentTarget);
+    const value = (formData.get("search") as string | null) ?? "";
+    setSearchTerm(value.trim());
+  };
+
   const filteredCodes = codes.filter((code) => {
     const matchesSearch =
       code.code.toLowerCase().includes(searchTerm.toLowerCase()) ||
@@ -168,15 +175,22 @@ const TeacherCodesPage = () => {
       <Card>
         <CardHeader>
           <div className="flex flex-col md:flex-row gap-4">
-            <div className="flex items-center space-x-2 flex-1">
+            <form className="flex items-center space-x-2 flex-1" onSubmit={handleSubmitSearch}>
               <Search className="h-4 w-4 text-muted-foreground" />
               <Input
+                name="search"
                 placeholder="البحث بالكود أو اسم الكورس..."
-                value={searchTerm}
-                onChange={(e) => setSearchTerm(e.target.value)}
+                defaultValue={searchTerm}
                 className="max-w-sm"
               />
-            </div>
+              <Button
+                type="submit"
+                size="sm"
+                variant="secondary"
+              >
+                بحث
+              </Button>
+            </form>
             <div className="flex items-center space-x-2">
               <Label htmlFor="course-filter" className="whitespace-nowrap">تصفية حسب الكورس:</Label>
               <Select value={courseFilter} onValueChange={setCourseFilter}>

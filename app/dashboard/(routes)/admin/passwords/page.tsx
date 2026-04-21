@@ -74,6 +74,13 @@ const PasswordsPage = () => {
         }
     };
 
+    const handleSubmitSearch = (e: React.FormEvent<HTMLFormElement>) => {
+        e.preventDefault();
+        const formData = new FormData(e.currentTarget);
+        const value = (formData.get("search") as string | null) ?? "";
+        setSearchTerm(value.trim());
+    };
+
     const filteredUsers = users.filter(user =>
         user.fullName.toLowerCase().includes(searchTerm.toLowerCase()) ||
         user.phoneNumber.includes(searchTerm)
@@ -103,15 +110,22 @@ const PasswordsPage = () => {
                 <Card>
                     <CardHeader>
                         <CardTitle>المشرفين والمعلمين</CardTitle>
-                        <div className="flex items-center space-x-2">
+                        <form className="flex items-center space-x-2" onSubmit={handleSubmitSearch}>
                             <Search className="h-4 w-4 text-muted-foreground" />
                             <Input
+                                name="search"
                                 placeholder="البحث بالاسم أو رقم الهاتف..."
-                                value={searchTerm}
-                                onChange={(e) => setSearchTerm(e.target.value)}
+                                defaultValue={searchTerm}
                                 className="max-w-sm"
                             />
-                        </div>
+                            <Button
+                                type="submit"
+                                size="sm"
+                                variant="secondary"
+                            >
+                                بحث
+                            </Button>
+                        </form>
                     </CardHeader>
                     <CardContent>
                         <Table>
@@ -169,15 +183,22 @@ const PasswordsPage = () => {
                 <Card>
                     <CardHeader>
                         <CardTitle>قائمة الطلاب</CardTitle>
-                        <div className="flex items-center space-x-2">
+                        <form className="flex items-center space-x-2" onSubmit={handleSubmitSearch}>
                             <Search className="h-4 w-4 text-muted-foreground" />
                             <Input
+                                name="search"
                                 placeholder="البحث بالاسم أو رقم الهاتف..."
-                                value={searchTerm}
-                                onChange={(e) => setSearchTerm(e.target.value)}
+                                defaultValue={searchTerm}
                                 className="max-w-sm"
                             />
-                        </div>
+                            <Button
+                                type="submit"
+                                size="sm"
+                                variant="secondary"
+                            >
+                                بحث
+                            </Button>
+                        </form>
                     </CardHeader>
                     <CardContent>
                         <Table>
