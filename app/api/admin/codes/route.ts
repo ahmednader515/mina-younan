@@ -1,15 +1,22 @@
 import { NextRequest, NextResponse } from "next/server";
 import { auth } from "@/lib/auth";
 import { db } from "@/lib/db";
-import { randomBytes } from "crypto";
+import { randomInt } from "crypto";
 
 // Generate unique code
 function generateCode(): string {
-  return randomBytes(8).toString("hex").toUpperCase();
+  // Short, readable alphabet (no 0/O/1/I/L).
+  const alphabet = "23456789ABCDEFGHJKMNPQRSTUVWXYZ";
+  const length = 6;
+  let out = "";
+  for (let i = 0; i < length; i++) {
+    out += alphabet[randomInt(0, alphabet.length)];
+  }
+  return out;
 }
 
 // GET - List all codes
-export async function GET(req: NextRequest) {
+export async function GET(_req: NextRequest) {
   try {
     const { userId, user } = await auth();
 
@@ -147,4 +154,3 @@ export async function POST(req: NextRequest) {
     return new NextResponse("Internal Error", { status: 500 });
   }
 }
-

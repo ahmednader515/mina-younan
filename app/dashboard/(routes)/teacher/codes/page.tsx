@@ -9,10 +9,11 @@ import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@
 import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogFooter } from "@/components/ui/dialog";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import { Label } from "@/components/ui/label";
-import { Search, Plus, Copy, Check, Ticket } from "lucide-react";
+import { Search, Plus, Copy, Check, Download } from "lucide-react";
 import { toast } from "sonner";
 import { format } from "date-fns";
 import { ar } from "date-fns/locale";
+import { downloadCodesXlsx, mapTeacherCodesToRows } from "@/lib/export/codes-to-xlsx";
 
 interface Course {
   id: string;
@@ -48,6 +49,7 @@ const TeacherCodesPage = () => {
   const [codeCount, setCodeCount] = useState<string>("1");
   const [isDialogOpen, setIsDialogOpen] = useState(false);
   const [isGenerating, setIsGenerating] = useState(false);
+  const [isDownloading, setIsDownloading] = useState(false);
   const [copiedCode, setCopiedCode] = useState<string | null>(null);
 
   useEffect(() => {
@@ -130,8 +132,35 @@ const TeacherCodesPage = () => {
       setCopiedCode(code);
       toast.success("تم نسخ الكود");
       setTimeout(() => setCopiedCode(null), 2000);
-    } catch (error) {
+    } catch {
       toast.error("فشل نسخ الكود");
+    }
+  };
+
+  const handleDownloadExcel = async () => {
+    setIsDownloading(true);
+    try {
+      const response = await fetch("/api/teacher/codes");
+      if (!response.ok) {
+        const error = await response.text();
+        toast.error(error || "حدث خطأ في تحميل الأكواد");
+        return;
+      }
+
+      const data = await response.json();
+      const rows = mapTeacherCodesToRows(Array.isArray(data) ? data : []);
+      const date = format(new Date(), "yyyy-MM-dd", { locale: ar });
+      await downloadCodesXlsx({
+        filename: `teacher-codes-${date}.xlsx`,
+        sheetName: "Codes",
+        rows,
+      });
+      toast.success("تم تنزيل ملف الإكسل");
+    } catch (error) {
+      console.error("Error downloading excel:", error);
+      toast.error("فشل تنزيل ملف الإكسل");
+    } finally {
+      setIsDownloading(false);
     }
   };
 
@@ -165,10 +194,20 @@ const TeacherCodesPage = () => {
     <div className="p-6 space-y-6">
       <div className="flex items-center justify-between">
         <h1 className="text-3xl font-bold text-gray-900 dark:text-white">إدارة الأكواد</h1>
-        <Button onClick={() => setIsDialogOpen(true)} className="bg-brand hover:bg-brand/90">
-          <Plus className="h-4 w-4 ml-2" />
-          إنشاء أكواد جديدة
-        </Button>
+        <div className="flex items-center gap-2">
+          <Button
+            variant="outline"
+            onClick={handleDownloadExcel}
+            disabled={isDownloading}
+          >
+            <Download className="h-4 w-4 ml-2" />
+            {isDownloading ? "جاري التنزيل..." : "تنزيل Excel"}
+          </Button>
+          <Button onClick={() => setIsDialogOpen(true)} className="bg-brand hover:bg-brand/90">
+            <Plus className="h-4 w-4 ml-2" />
+            إنشاء أكواد جديدة
+          </Button>
+        </div>
       </div>
 
       {/* Search and Filter */}
